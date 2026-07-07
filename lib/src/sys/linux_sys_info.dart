@@ -18,4 +18,23 @@ class LinuxSysInfo {
     }
     return memMap;
   }
+
+  /// CPU Model နာမည်ကို ဖတ်မည်
+  String getCpuModel() {
+    final file = File('/proc/cpuinfo');
+    if (!file.existsSync()) return 'Unknown';
+
+    for (var line in file.readAsLinesSync()) {
+      if (line.startsWith('model name')) {
+        return line.split(':')[1].trim(); // e.g., "Intel(R) Core(TM) i7-..."
+      }
+    }
+    return 'Unknown';
+  }
+
+  /// CPU Cores အရေအတွက်ကို ဖတ်မည်
+  int getCpuCores() {
+    return Platform
+        .numberOfProcessors; // Dart standard library ကနေလည်း တိုက်ရိုက်ရပါတယ်
+  }
 }

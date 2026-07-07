@@ -1,0 +1,9 @@
+name: ProcessBindings
+description: Bindings for Linux libc process control (kill signal).
+output: "../lib/src/process/process_bindings.dart"
+headers:
+  entry-points:
+    - "/usr/include/signal.h"
+functions:
+  include:
+    - kill # Process ကို Signal လှမ်းပို့ပြီး ပိတ်မယ့် function

@@ -2,8 +2,27 @@
 
 ## Linux Platform
 
-### 
+### FFmpeg
 ```dart
+final sys = LinuxSysFfi.instance;
+final ffmpeg = sys.ffmpeg;
+
+print('isAvailable: ${await ffmpeg.core.isAvailable()}');
+print('getSupportedFormats: ${await ffmpeg.core.getSupportedFormats()}');
+print('getSupportedCodecs: ${await ffmpeg.core.getSupportedCodecs()}');
+print('isFormatSupported: ${await ffmpeg.core.isFormatSupported('mp3')}');
+
+
+```
+
+### Processes
+```dart
+final sys = LinuxSysFfi.instance;
+for (var pc in sys.process.getRunningProcesses()) {
+print('pid: ${pc.pid}');
+print('name: ${pc.name}');
+}
+sys.process.killProcess(pid);
 ```
 ### System Info 
 ```dart
@@ -14,11 +33,15 @@ final distro = LinuxSysFfi.instance.distro;
 print('distroName: ${distro.name}');
 print('osRelease: ${distro.osRelease}');
 
+final sys = LinuxSysFfi.instance;
+print('getCpuModel: ${sys.sysInfo.getCpuModel()}');
+print('getCpuCores: ${sys.sysInfo.getCpuCores()}');
+
 // Launch
 LinuxSysFfi.instance.launcher.open(pathOrUrl);
 
 ```
-### Powser
+### Power
 ```dart
 final power = LinuxSysFfi.instance.power;
 
@@ -91,9 +114,9 @@ await wf.getWifiListNmCli();
 
 for (var wifi in availableWifi) {
     print("--------------------------------");
-    print("SSID: ${wifi['ssid']}");
-    print("Signal: ${wifi['signal_strength']}% (${wifi['bars']})");
-    print("Security: ${wifi['security_type']}");
+    print("SSID: ${wifi.ssid}");
+    print("Signal: ${wifi.signalStrength}% (${wifi.bars})");
+    print("Security: ${wifi.securityType}");
 }
 
 WiFi list များကို ရှာဖွေနေပါသည်...
@@ -109,4 +132,16 @@ Security: WPA2
 SSID: Daw San San Htay
 Signal: 20% (▂___)
 Security: WPA1 WPA2
+
+
+for (var ip in await sys.wifi.getAllNetworkIps()) {
+    print('IP: $ip');
+}
+
+IP: NetworkIp(interfaceName: lo, type: IPv4, ip: 127.0.0.1, description: Local Host (Loopback))
+IP: NetworkIp(interfaceName: lo, type: IPv6, ip: ::1, description: Local Host (Loopback))
+IP: NetworkIp(interfaceName: wlp2s0, type: IPv4, ip: 10.125.103.2, description: Wi-Fi / Hotspot)
+IP: NetworkIp(interfaceName: wlp2s0, type: IPv6, ip: fe80::c1e8:c882:b5f3:47a, description: Wi-Fi / Hotspot)
+
+
 ```

@@ -3,6 +3,7 @@
 import 'dart:ffi';
 import 'dart:io';
 
+import 'package:linux_sys_ffi/linux_sys_ffi.dart';
 import 'package:linux_sys_ffi/src/network/wifi_bindings.dart';
 
 class LinuxWifi {
@@ -85,8 +86,8 @@ class LinuxWifi {
   }
 
   /// အနီးအနားတွင်ရှိသော WiFi list များကို ရှာဖွေပြီး Name (SSID)၊ Signal Strength၊ Security စသည်တို့ကို ပြန်ပေးမည်။
-  Future<List<Map<String, dynamic>>> getWifiListNmCli() async {
-    final List<Map<String, dynamic>> wifiList = [];
+  Future<List<WifiNmcliItem>> getWifiListNmCli() async {
+    final List<WifiNmcliItem> wifiList = [];
 
     try {
       // Error ဖြစ်စေတဲ့ -d option ကို ဖြုတ်လိုက်ပြီး standard terse mode (-t) ကိုပဲ သုံးထားပါတယ်
@@ -130,25 +131,189 @@ class LinuxWifi {
 
         if (ssid.isEmpty) continue;
 
-        wifiList.add({
-          'ssid': ssid,
-          'signal_strength': signal, // 0 to 100
-          'bars': bars, // e.g., "▂▄▆_"
-          'is_secure': security.isNotEmpty && security != '--',
-          'security_type': security == '--' ? 'Open' : security,
-        });
+        // wifiList.add({
+        //   'ssid': ssid,
+        //   'signal_strength': signal, // 0 to 100
+        //   'bars': bars, // e.g., "▂▄▆_"
+        //   'is_secure': security.isNotEmpty && security != '--',
+        //   'security_type': security == '--' ? 'Open' : security,
+        // });
+        wifiList.add(
+          WifiNmcliItem(
+            ssid: ssid,
+            signalStrength: signal, // 0 to 100
+            bars: bars,
+            isSecure: security.isNotEmpty && security != '--',
+            securityType: security == '--' ? 'Open' : security,
+          ),
+        );
       }
 
       // Signal ပိုကောင်းတဲ့ WiFi ကို အပေါ်ဆုံးကပြချင်လို့ Sort ပတ်ပေးလိုက်တာပါ
-      wifiList.sort(
-        (a, b) => (b['signal_strength'] as int).compareTo(
-          a['signal_strength'] as int,
-        ),
-      );
+      wifiList.sort((a, b) => (b.signalStrength).compareTo(a.signalStrength));
     } catch (e) {
       print("nmcli command အား မပတ်နိုင်ပါ: $e");
     }
 
     return wifiList;
+  }
+
+  /// လက်ရှိစက်ထဲတွင် ချိတ်ဆက်ထားသမျှ WiFi Interfaces အားလုံး၏ IP Address List ကို ယူမည်
+  Future<List<Map<String, String>>> getWifiIpList() async {
+    final List<Map<String, String>> wifiIpList = [];
+
+    try {
+      // Linux ရဲ့ 'ip -o addr show' command က interface အလိုက် ip တွေကို တစ်ကြောင်းတည်းနဲ့ ရှင်းရှင်းထုတ်ပေးပါတယ်
+      final result = await Process.run('ip', ['-o', 'addr', 'show']);
+      if (result.exitCode != 0) return wifiIpList;
+
+      final String stdout = result.stdout as String;
+      final List<String> lines = stdout.split('\n');
+
+      for (var line in lines) {
+        if (line.trim().isEmpty) continue;
+
+        // WiFi interface ဟုတ်မဟုတ် စစ်ဆေးရန် (e.g., wlan0, wlp3s0, wlo1)
+        // 'wl' ဖြင့် စသော interface အမည်များကို ရှာပါမည်
+        final tokens = line.split(RegExp(r'\s+'));
+        if (tokens.length < 4) continue;
+
+        final String interfaceName = tokens[1]; // e.g., wlp3s0
+        if (!interfaceName.startsWith('wl')) continue;
+
+        final String protocol = tokens[2]; // inet (IPv4) သို့မဟုတ် inet6 (IPv6)
+        final String ipWithSubnet = tokens[3]; // e.g., 192.168.1.5/24
+        final String ipAddress = ipWithSubnet
+            .split('/')
+            .first; // Subnet mask ကို ဖြတ်ထုတ်ပစ်မည်
+
+        if (protocol == 'inet' || protocol == 'inet6') {
+          wifiIpList.add({
+            'interface': interfaceName,
+            'type': protocol == 'inet' ? 'IPv4' : 'IPv6',
+            'ip': ipAddress,
+          });
+        }
+      }
+    } catch (e) {
+      print("Error fetching WiFi IP List: $e");
+    }
+
+    return wifiIpList;
+  }
+
+  /// Local Data Sharing အတွက် စက်ထဲရှိ Active IPv4 Addresses အားလုံးကို ဆွဲထုတ်မည်
+  Future<List<Map<String, String>>> getAllActiveLocalIps() async {
+    final List<Map<String, String>> ipList = [];
+
+    try {
+      // 'ip -o -4 addr show' ဆိုရင် active ဖြစ်နေတဲ့ IPv4 interface တွေကိုပဲ ရှင်းရှင်းလင်းလင်း ထုတ်ပေးပါတယ်
+      final result = await Process.run('ip', ['-o', '-4', 'addr', 'show']);
+      if (result.exitCode != 0) return ipList;
+
+      final String stdout = result.stdout as String;
+      final List<String> lines = stdout.split('\n');
+
+      for (var line in lines) {
+        if (line.trim().isEmpty) continue;
+
+        final tokens = line.split(RegExp(r'\s+'));
+        if (tokens.length < 4) continue;
+
+        final String interfaceName = tokens[1]; // e.g., wlp3s0, enp2s0, lo, ap0
+        final String ipWithSubnet = tokens[3]; // e.g., 10.125.103.2/24
+        final String ipAddress = ipWithSubnet
+            .split('/')
+            .first; // "10.125.103.2" ပဲ ဖြတ်ယူမယ်
+
+        // Local Loopback (127.0.0.1) ကိုတော့ data sharing မှာ သုံးလို့မရလို့ ဖယ်ထားခဲ့ပါမယ်
+        if (interfaceName == 'lo' || ipAddress.startsWith('127.')) continue;
+
+        // Interface အမျိုးအစားကို ခွဲခြားခေါ်ဝေါ်ခြင်း
+        String interfaceType = 'Other';
+        if (interfaceName.startsWith('wl')) {
+          interfaceType = 'WiFi / Hotspot';
+        } else if (interfaceName.startsWith('en') ||
+            interfaceName.startsWith('eth')) {
+          interfaceType = 'Ethernet (LAN)';
+        } else if (interfaceName.startsWith('br')) {
+          interfaceType = 'Bridge Network';
+        } else if (interfaceName.startsWith('docker') ||
+            interfaceName.startsWith('vbox')) {
+          interfaceType = 'Virtual Network';
+        }
+
+        ipList.add({
+          'interface': interfaceName,
+          'type': interfaceType,
+          'ip': ipAddress,
+        });
+      }
+    } catch (e) {
+      print("Error scanning local IPs: $e");
+    }
+
+    return ipList;
+  }
+
+  /// စက်ထဲတွင် ရှိသမျှ၊ ချိတ်ဆက်ထားသမျှ Network Interface အားလုံး၏ IP (IPv4 & IPv6) အကုန်ထုတ်ပေးမည်
+  Future<List<NetworkIp>> getAllNetworkIps() async {
+    final List<NetworkIp> ipList = [];
+
+    try {
+      // '-o' flag က interface အချက်အလက်တွေကို တစ်ကြောင်းတည်း ဖြစ်အောင် ထုတ်ပေးတာပါ
+      final result = await Process.run('ip', ['-o', 'addr', 'show']);
+      if (result.exitCode != 0) return ipList;
+
+      final String stdout = result.stdout as String;
+      final List<String> lines = stdout.split('\n');
+
+      for (var line in lines) {
+        if (line.trim().isEmpty) continue;
+
+        final tokens = line.split(RegExp(r'\s+'));
+        if (tokens.length < 4) continue;
+
+        final String interfaceName =
+            tokens[1]; // e.g., lo, wlp2s0, usb0, enp2s0
+        final String protocol = tokens[2]; // inet (IPv4) သို့မဟုတ် inet6 (IPv6)
+        final String ipWithSubnet =
+            tokens[3]; // e.g., 10.125.103.2/24, fe80::.../64
+        final String ipAddress = ipWithSubnet
+            .split('/')
+            .first; // IP သီးသန့် ဖြတ်ယူခြင်း
+
+        // Interface အမျိုးအစားကို သတ်မှတ်ခြင်း
+        String interfaceType = 'Other/Virtual';
+        if (interfaceName == 'lo') {
+          interfaceType = 'Local Host (Loopback)';
+        } else if (interfaceName.startsWith('wl') ||
+            interfaceName.startsWith('wlan')) {
+          interfaceType = 'Wi-Fi / Hotspot';
+        } else if (interfaceName.startsWith('en') ||
+            interfaceName.startsWith('eth')) {
+          interfaceType = 'Ethernet (LAN)';
+        } else if (interfaceName.startsWith('usb')) {
+          interfaceType = 'USB Tethering';
+        } else if (interfaceName.startsWith('p2p')) {
+          interfaceType = 'Wi-Fi Direct / P2P';
+        } else if (interfaceName.startsWith('br')) {
+          interfaceType = 'Bridge Network';
+        }
+
+        ipList.add(
+          NetworkIp(
+            interfaceName: interfaceName,
+            type: protocol == 'inet' ? 'IPv4' : 'IPv6',
+            ip: ipAddress,
+            description: interfaceType,
+          ),
+        );
+      }
+    } catch (e) {
+      print("Error fetching all network IPs: $e");
+    }
+
+    return ipList;
   }
 }
