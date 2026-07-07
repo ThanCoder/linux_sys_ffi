@@ -1,0 +1,23 @@
+# ffigen.yaml (Notification ပိုင်း ထပ်တိုးရန်)
+name: NotifyBindings
+description: Auto-generated Linux Libnotify bindings for Dart
+output: "../lib/src/notification/notify_bindings.dart"
+
+headers:
+  entry-points:
+    - "/usr/include/libnotify/notify.h"
+  include-directives:
+    - "/usr/include/libnotify/**"
+
+compiler-opts:
+  - "-I/usr/include/libnotify"
+  - "-I/usr/include/gdk-pixbuf-2.0" # ပုံတွေ၊ icon တွေပြဖို့ လိုအပ်လို့ပါ
+  - "-I/usr/include/glib-2.0"
+  - "-I/usr/lib/x86_64-linux-gnu/glib-2.0/include"
+
+functions:
+  include:
+    - "notify_init" # Notification စနစ်ကို Initialize လုပ်ရန်
+    - "notify_notification_new" # Notification Object အသစ်ဆောက်ရန်
+    - "notify_notification_show" # Notification ကို Screen ပေါ် ပြရန်
+    - "notify_uninit" # စနစ်ကို ပြန်ပိတ်ရန်

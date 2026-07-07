@@ -1,0 +1,31 @@
+# ffigen.yaml
+name: GtkBindings
+description: Auto-generated GTK3 File Chooser bindings for Dart
+output: "lib/src/file_selector/gtk_bindings.dart"
+
+#dart run ffigen --config gtk_bindings_ffigen.yaml
+
+headers:
+  entry-points:
+    - "/usr/include/gtk-3.0/gtk/gtk.h"
+  include-directives:
+    - "/usr/include/gtk-3.0/gtk/**"
+
+# 💡 ဖြေရှင်းချက်က ဒီနေရာပါ - Clang Compiler အတွက် Header Paths တွေ ညွှန်ပြပေးခြင်း
+compiler-opts:
+  - "-I/usr/include/gtk-3.0"
+  - "-I/usr/include/glib-2.0"
+  - "-I/usr/lib/x86_64-linux-gnu/glib-2.0/include" # glibconfig.h ရှိမည့်နေရာ
+  - "-I/usr/include/pango-1.0"
+  - "-I/usr/include/harfbuzz"
+  - "-I/usr/include/cairo"
+  - "-I/usr/include/gdk-pixbuf-2.0"
+  - "-I/usr/include/atk-1.0"
+
+functions:
+  include:
+    - "gtk_init"
+    - "gtk_file_chooser_native_new"
+    - "gtk_native_dialog_run"
+    - "gtk_file_chooser_get_filename"
+    - "gtk_main_iteration"
