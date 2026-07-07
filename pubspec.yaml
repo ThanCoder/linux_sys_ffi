@@ -1,5 +1,5 @@
 name: linux_sys_ffi
-description: A starting point for Dart libraries or applications.
+description: Native Linux system interaction for Flutter and Dart. Easily manage background processes, network interfaces, hardware states via FFI, and complex FFmpeg media conversion natively.
 version: 0.1.0
 repository: https://github.com/ThanCoder/linux_sys_ffi.git
 

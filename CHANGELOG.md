@@ -1,13 +1,7 @@
 # 0.1.0
 
-- LinuxLauncher get launcher => _launcher;
-- LinuxDistro get distro => _distro;
-- LinuxSysInfo get sysInfo => _sysInfo;
-- LinuxPower get power => _power;
-- LinuxSudoPrompt get sudoPrompt => _sudoPrompt;
-- LinuxNotify get notify => _noti;
-- LinuxBattery get battery => _battery;
-- LinuxBrightness get brightness => _brightness;
-- LinuxSecurity get security => _security;
-- LinuxSound get sound => _sound;
-- LinuxWifi get wifi => _wifi;
+## Features
+- **FFmpeg Advanced Engine:** Video to Audio extractor with enum-based configurations, real-time progress callbacks, and `FFmpegCancelToken` support.
+- **Metadata Tools:** Extract embedded album arts, audio tags, and video snapshots with custom resolution scaling.
+- **Network & IP Intelligence:** Fetch all active network interfaces including Wi-Fi, Ethernet, USB Tethering, and local IPv4/IPv6 address listings.
+- **Process Manager:** FFI-based background process mapping and task killing capability via POSIX signals.

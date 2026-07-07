@@ -1,8 +1,15 @@
 # linux_sys_ffi
 
-## Linux Platform
+
+## Features
+- **FFmpeg Advanced Engine:** Video to Audio extractor with enum-based configurations, real-time progress callbacks, and `FFmpegCancelToken` support.
+- **Metadata Tools:** Extract embedded album arts, audio tags, and video snapshots with custom resolution scaling.
+- **Network & IP Intelligence:** Fetch all active network interfaces including Wi-Fi, Ethernet, USB Tethering, and local IPv4/IPv6 address listings.
+- **Process Manager:** FFI-based background process mapping and task killing capability via POSIX signals.
 
 ### FFmpeg
+[Example](https://github.com/ThanCoder/linux_sys_ffi/blob/main/example/ffmpeg_example.dart)
+
 ```dart
 final sys = LinuxSysFfi.instance;
 final ffmpeg = sys.ffmpeg;
@@ -14,6 +21,7 @@ print('isFormatSupported: ${await ffmpeg.core.isFormatSupported('mp3')}');
 
 
 ```
+
 
 ### Processes
 ```dart
