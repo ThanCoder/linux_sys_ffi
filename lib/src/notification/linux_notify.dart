@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:ffi/ffi.dart';
 import 'package:linux_sys_ffi/src/notification/notify_bindings.dart';
 
-class Notify {
+class LinuxNotify {
   static Future<void> sendTerminal({
     required String title,
     required String body,
@@ -14,16 +14,20 @@ class Notify {
     await Process.run('notify-send', [title, body]);
   }
 
-  late NotifyBindings _bindings;
+  late final NotifyBindings _bindings;
 
-  Notify init(String appName) {
+  /// ### Use Lib -> `libnotify.so.4`
+  LinuxNotify({String? libPath = 'libnotify.so.4'}) {
     _bindings = NotifyBindings(DynamicLibrary.open('libnotify.so.4'));
+  }
+
+  LinuxNotify init(String appName) {
     final app_name = appName.toNativeUtf8();
     _bindings.notify_init(app_name.cast<Char>());
     return this;
   }
 
-  Notify show(String title, String body) {
+  LinuxNotify show(String title, String body) {
     final c_title = title.toNativeUtf8();
     final c_body = body.toNativeUtf8();
     final c_icon = 'dialog-information'.toNativeUtf8();

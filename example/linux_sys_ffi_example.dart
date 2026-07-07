@@ -2,14 +2,15 @@
 
 import 'dart:io';
 
+import 'package:linux_sys_ffi/linux_sys_ffi.dart';
 import 'package:linux_sys_ffi/src/file_selector/file_selector.dart';
-import 'package:linux_sys_ffi/src/notification/notify.dart';
+import 'package:linux_sys_ffi/src/network/linux_wifi.dart';
+import 'package:linux_sys_ffi/src/notification/linux_notify.dart';
+import 'package:linux_sys_ffi/src/security/linux_security.dart';
+import 'package:linux_sys_ffi/src/sound/linux_sound.dart';
+import 'package:linux_sys_ffi/src/sys/linux_power.dart';
+import 'package:linux_sys_ffi/src/sys/linux_sudo_prompt.dart';
 
 void main() async {
-  // await Process.run('notify-send', ['ခေါင်းစဉ်', 'မက်ဆေ့ခ်ျ အကြောင်းအရာပါဗျာ']);
-  Notify().init('appName').show('title', 'body').close();
-  // final selector = FileChooser();
-  // selector.init();
-  // final res = selector.openFile();
-  // print(res);
+  // final distro = LinuxSysFfi.instance.launcher;
 }

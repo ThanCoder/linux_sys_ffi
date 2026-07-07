@@ -5,8 +5,9 @@ import 'package:linux_sys_ffi/src/file_selector/gtk_bindings.dart';
 class FileChooser {
   late GtkBindings _gtk;
 
-  void init() {
-    final lib = DynamicLibrary.open('libgtk-3.so.0');
+  /// ### Use Lib -> `libgtk-3.so.0`
+  FileChooser({String libPath = 'libgtk-3.so.0'}) {
+    final lib = DynamicLibrary.open(libPath);
     _gtk = GtkBindings(lib);
     _gtk.gtk_init(nullptr, nullptr);
   }

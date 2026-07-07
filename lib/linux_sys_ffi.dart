@@ -1,1 +1,45 @@
 library;
+
+import 'package:linux_sys_ffi/src/network/linux_wifi.dart';
+import 'package:linux_sys_ffi/src/notification/linux_notify.dart';
+import 'package:linux_sys_ffi/src/sys/linux_battery.dart';
+import 'package:linux_sys_ffi/src/sys/linux_brightness.dart';
+import 'package:linux_sys_ffi/src/sys/linux_distro.dart';
+import 'package:linux_sys_ffi/src/sys/linux_launcher.dart';
+import 'package:linux_sys_ffi/src/sys/linux_power.dart';
+import 'package:linux_sys_ffi/src/sys/linux_sudo_prompt.dart';
+import 'package:linux_sys_ffi/src/sys/linux_sys_info.dart';
+
+import 'src/security/linux_security.dart';
+import 'src/sound/linux_sound.dart';
+
+class LinuxSysFfi {
+  // Singleton pattern သုံးထားလို့ instance တစ်ခုတည်းနဲ့ သုံးနိုင်ပါတယ်
+  static final LinuxSysFfi instance = LinuxSysFfi._internal();
+  LinuxSysFfi._internal();
+
+  final _battery = LinuxBattery();
+  final _brightness = LinuxBrightness();
+  final _security = LinuxSecurity();
+  final _sound = LinuxSound();
+  final _wifi = LinuxWifi();
+  final _noti = LinuxNotify();
+  final _sudoPrompt = LinuxSudoPrompt();
+  final _power = LinuxPower();
+  final _sysInfo = LinuxSysInfo();
+  final _distro = LinuxDistro();
+  final _launcher = LinuxLauncher();
+
+  // getter
+  LinuxLauncher get launcher => _launcher;
+  LinuxDistro get distro => _distro;
+  LinuxSysInfo get sysInfo => _sysInfo;
+  LinuxPower get power => _power;
+  LinuxSudoPrompt get sudoPrompt => _sudoPrompt;
+  LinuxNotify get notify => _noti;
+  LinuxBattery get battery => _battery;
+  LinuxBrightness get brightness => _brightness;
+  LinuxSecurity get security => _security;
+  LinuxSound get sound => _sound;
+  LinuxWifi get wifi => _wifi;
+}

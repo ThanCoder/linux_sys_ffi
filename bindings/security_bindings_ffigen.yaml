@@ -1,0 +1,9 @@
+name: SecurityBindings
+description: Bindings for Linux security and user permissions (libc).
+output: "../lib/src/security/security_bindings.dart"
+headers:
+  entry-points:
+    - "/usr/include/unistd.h"
+functions:
+  include:
+    - geteuid # Effective User ID ကို ဖတ်ပေးမယ့် function

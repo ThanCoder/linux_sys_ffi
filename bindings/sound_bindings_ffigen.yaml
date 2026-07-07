@@ -1,0 +1,27 @@
+name: SoundBindings
+description: Bindings for Linux ALSA Sound Architecture (libasound).
+
+# preamble အောက်မှာ ကိုယ်ထည့်ချင်တဲ့ line ကို ရေးပေးရပါတယ်
+preamble: |
+  typedef snd_mixer_selem_channel_id = _snd_mixer_selem_channel_id;
+  
+output: "../lib/src/sound/sound_bindings.dart"
+headers:
+  entry-points:
+    - "/usr/include/alsa/asoundlib.h"
+functions:
+  include:
+    - snd_mixer_open
+    - snd_mixer_attach
+    - snd_mixer_selem_register
+    - snd_mixer_load
+    - snd_mixer_first_elem
+    - snd_mixer_selem_next
+    - snd_mixer_selem_is_active
+    - snd_mixer_selem_get_name
+    - snd_mixer_selem_get_playback_volume_range
+    - snd_mixer_selem_set_playback_volume_all
+    - snd_mixer_selem_get_playback_volume
+    - snd_mixer_close
+    - snd_mixer_elem_next
+    - snd_mixer_selem_get_playback_volume

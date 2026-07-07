@@ -1,0 +1,24 @@
+name: WifiBindings
+description: Bindings for Linux NetworkManager (libnm) to control WiFi.
+output: "../lib/src/network/wifi_bindings.dart"
+
+# sudo apt install libnm-dev
+headers:
+  entry-points:
+    - "/usr/include/libnm/NetworkManager.h"
+
+compiler-opts:
+  - '-I/usr/include/glib-2.0'
+  - '-I/usr/lib/x86_64-linux-gnu/glib-2.0/include'
+  - '-I/usr/include/libnm'
+
+functions:
+  include:
+    - nm_client_new
+    - nm_client_get_devices
+    - nm_device_get_device_type
+    - nm_device_wifi_get_access_points
+    - nm_access_point_get_ssid
+    - nm_access_point_get_strength
+    - g_bytes_get_data
+    - g_object_unref
