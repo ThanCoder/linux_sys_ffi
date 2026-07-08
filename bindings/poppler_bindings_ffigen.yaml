@@ -1,0 +1,19 @@
+name: PopplerBindings
+description: "Bindings for Poppler GLib PDF library"
+output: "../lib/src/pdf/poppler_bindings.dart"
+headers:
+  entry-points:
+    - "/usr/include/poppler/glib/poppler.h"
+compiler-opts:
+  - "-I/usr/include/poppler/glib"
+  - "-I/usr/include/glib-2.0"
+  - "-I/usr/lib/x86_64-linux-gnu/glib-2.0/include"
+  - "-I/usr/include/cairo"
+functions:
+  include:
+    - "poppler_document_new_from_file"
+    - "poppler_document_get_n_pages"
+    - "poppler_document_get_page"
+    - "poppler_page_render"
+    - "poppler_.*"
+    - "g_object_unref" # ဒီကောင်လေး တိုးပေးလိုက်ပါ

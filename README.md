@@ -7,6 +7,17 @@
 - **Network & IP Intelligence:** Fetch all active network interfaces including Wi-Fi, Ethernet, USB Tethering, and local IPv4/IPv6 address listings.
 - **Process Manager:** FFI-based background process mapping and task killing capability via POSIX signals.
 
+### Screenshot
+```dart
+
+final sys = LinuxSysFfi.instance;
+
+await sys.screenshot.gnome.save('fullscreen.png');
+
+await sys.screenshot.scrot.selectArea().save('scrot.png');
+
+```
+
 ### FFmpeg
 [Example](https://github.com/ThanCoder/linux_sys_ffi/blob/main/example/ffmpeg_example.dart)
 

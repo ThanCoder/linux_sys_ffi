@@ -3,7 +3,9 @@ library;
 import 'package:linux_sys_ffi/src/ffmpeg/linux_ffmpeg.dart';
 import 'package:linux_sys_ffi/src/network/linux_wifi.dart';
 import 'package:linux_sys_ffi/src/notification/linux_notify.dart';
+import 'package:linux_sys_ffi/src/pdf/pdf.dart';
 import 'package:linux_sys_ffi/src/process/linux_process.dart';
+import 'package:linux_sys_ffi/src/screenshot/screenshot.dart';
 import 'package:linux_sys_ffi/src/sys/linux_battery.dart';
 import 'package:linux_sys_ffi/src/sys/linux_brightness.dart';
 import 'package:linux_sys_ffi/src/sys/linux_distro.dart';
@@ -11,6 +13,7 @@ import 'package:linux_sys_ffi/src/sys/linux_launcher.dart';
 import 'package:linux_sys_ffi/src/sys/linux_power.dart';
 import 'package:linux_sys_ffi/src/sys/linux_sudo_prompt.dart';
 import 'package:linux_sys_ffi/src/sys/linux_sys_info.dart';
+import 'package:linux_sys_ffi/src/webview/linux_webkit.dart';
 
 import 'src/security/linux_security.dart';
 import 'src/sound/linux_sound.dart';
@@ -38,8 +41,14 @@ class LinuxSysFfi {
   final _launcher = LinuxLauncher();
   final _process = LinuxProcess();
   final _ffmpeg = LinuxFFmpeg();
+  final _screenshot = Screenshot();
+  final _pdf = Pdf();
+  final _webkit = LinuxWebkit();
 
   // getter
+  LinuxWebkit get webkit => _webkit;
+  Pdf get pdf => _pdf;
+  Screenshot get screenshot => _screenshot;
   LinuxFFmpeg get ffmpeg => _ffmpeg;
   LinuxProcess get process => _process;
   LinuxLauncher get launcher => _launcher;

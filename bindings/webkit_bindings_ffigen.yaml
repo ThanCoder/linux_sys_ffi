@@ -1,0 +1,64 @@
+name: WebKitBindings
+description: Automatically generated Dart bindings for WebKit2GTK 4.1.
+output: "../lib/src/webview/webkit_bindings.dart"
+
+compiler-opts:
+  - "-I/usr/include/webkitgtk-4.1"
+  - "-I/usr/include/glib-2.0"
+  - "-I/usr/lib/x86_64-linux-gnu/glib-2.0/include"
+  - "-I/usr/include/gtk-3.0"
+  - "-I/usr/include/pango-1.0"
+  - "-I/usr/include/cairo"
+  - "-I/usr/include/gdk-pixbuf-2.0"
+  - "-I/usr/include/harfbuzz"
+  - "-I/usr/include/libsoup-3.0"
+  - "-I/usr/include/atk-1.0"
+
+headers:
+  entry-points:
+    - "/usr/include/webkitgtk-4.1/webkit2/webkit2.h"
+    - "/usr/include/gtk-3.0/gtk/gtk.h"
+
+functions:
+  include:
+    # 1. WebKit အတွက် မဖြစ်မနေလိုမယ့် Core Functions များ
+    - "webkit_web_view_new"
+    - "webkit_web_view_load_uri"
+    - "webkit_web_view_get_snapshot" # Screenshot ရိုက်မည့်အဓိကကောင်
+    - "webkit_web_view_evaluate_javascript"
+    - "webkit_web_view_run_javascript_finish"
+    - "webkit_web_view_evaluate_javascript_finish"
+    - "webkit_javascript_result_get_js_value"
+    - "jsc_value_to_string"
+    # 2. GTK Window & Loop စီမံရန် Functions များ
+    - "gtk_init"
+    - "gtk_main"
+    - "gtk_main_quit"
+    - "gtk_window_new"
+    - "gtk_container_add"
+    - "gtk_widget_show_all"
+    - "gtk_widget_destroy"
+    - "gtk_window_set_title"
+    - "gtk_window_set_default_size"
+    # 3. GLib Signalling (Page Load ပြီးတာကို Callback ဖမ်းရန်) နဲ့ Memory free လုပ်ရန်
+    - "g_signal_connect_data"
+    - "g_object_unref"
+
+structs:
+  include:
+    # Struct အကုန်လုံးမယူတော့ဘဲ နာမည်ကွက်တိတွေပဲ ယူမယ်
+    - "WebKitWebView"
+    - "GtkWidget"
+    - "GtkWindow"
+    - "GError"
+    - "cairo_t"
+    - "cairo_surface_t"
+    - "GtkContainer" # gtk_container_add သုံးရန်
+    - "_GClosure" # g_signal_connect_data ရဲ့ callback function ထဲမှာ သုံးထားလို့
+
+enums:
+  include:
+    # WebKit ရဲ့ Snapshot option/region သတ်မှတ်ချက် enum လောက်ပဲ ယူမယ်
+    - "WebKitSnapshotRegion"
+    - "WebKitSnapshotOptions"
+    - "GConnectFlags" # g_signal_connect_data ထဲမှာ သုံးရန်
