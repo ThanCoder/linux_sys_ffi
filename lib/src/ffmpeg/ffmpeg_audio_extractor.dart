@@ -1,5 +1,4 @@
 import 'package:linux_sys_ffi/linux_sys_ffi.dart';
-import 'package:linux_sys_ffi/src/ffmpeg/ffmpeg_audio_bitrate.dart';
 import 'package:linux_sys_ffi/src/ffmpeg/ffmpeg_core.dart';
 
 class FFmpegAudioExtractor {

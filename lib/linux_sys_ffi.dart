@@ -1,5 +1,6 @@
 library;
 
+import 'package:linux_sys_ffi/src/client/curl_client.dart';
 import 'package:linux_sys_ffi/src/ffmpeg/linux_ffmpeg.dart';
 import 'package:linux_sys_ffi/src/network/linux_wifi.dart';
 import 'package:linux_sys_ffi/src/notification/linux_notify.dart';
@@ -43,10 +44,10 @@ class LinuxSysFfi {
   final _ffmpeg = LinuxFFmpeg();
   final _screenshot = Screenshot();
   final _pdf = Pdf();
-  final _webkit = LinuxWebkit();
+  final _curl = CurlClient();
 
-  // getter
-  LinuxWebkit get webkit => _webkit;
+  // getter;
+  CurlClient get curl => _curl;
   Pdf get pdf => _pdf;
   Screenshot get screenshot => _screenshot;
   LinuxFFmpeg get ffmpeg => _ffmpeg;

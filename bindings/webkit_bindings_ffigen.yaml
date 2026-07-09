@@ -18,19 +18,27 @@ headers:
   entry-points:
     - "/usr/include/webkitgtk-4.1/webkit2/webkit2.h"
     - "/usr/include/gtk-3.0/gtk/gtk.h"
+    # JS Handling အတွက် JavaScriptCore Header ကိုပါ ထည့်ပေးရပါမယ်
+    - "/usr/include/webkitgtk-4.1/jsc/jsc.h"
 
 functions:
   include:
-    # 1. WebKit အတွက် မဖြစ်မနေလိုမယ့် Core Functions များ
+    # 1. WebKit Core Functions
     - "webkit_web_view_new"
     - "webkit_web_view_load_uri"
-    - "webkit_web_view_get_snapshot" # Screenshot ရိုက်မည့်အဓိကကောင်
+    - "webkit_web_view_get_snapshot"
+    - "webkit_web_view_get_snapshot_finish" # Snapshot ပြီးဆုံးကြောင်း ဖမ်းရန် လိုအပ်
     - "webkit_web_view_evaluate_javascript"
-    - "webkit_web_view_run_javascript_finish"
     - "webkit_web_view_evaluate_javascript_finish"
     - "webkit_javascript_result_get_js_value"
     - "jsc_value_to_string"
-    # 2. GTK Window & Loop စီမံရန် Functions များ
+    - "webkit_javascript_result_unref" # 💡 Memory ရှင်းဖို့ ထပ်ဖြည့်ရပါမယ်
+    - "g_free"
+    - "webkit_web_view_new_with_user_content_manager"
+    - 'webkit_user_content_manager_new'
+    - 'webkit_user_content_manager_register_script_message_handler'
+
+    # 2. GTK Window & Loop
     - "gtk_init"
     - "gtk_main"
     - "gtk_main_quit"
@@ -40,25 +48,32 @@ functions:
     - "gtk_widget_destroy"
     - "gtk_window_set_title"
     - "gtk_window_set_default_size"
-    # 3. GLib Signalling (Page Load ပြီးတာကို Callback ဖမ်းရန်) နဲ့ Memory free လုပ်ရန်
+    - "g_main_context_default"
+    - "g_main_context_iteration"
+    - "g_main_context_invoke"
+    - "g_idle_add"
+
+    # 3. GLib Signalling & Async
     - "g_signal_connect_data"
     - "g_object_unref"
 
 structs:
   include:
-    # Struct အကုန်လုံးမယူတော့ဘဲ နာမည်ကွက်တိတွေပဲ ယူမယ်
     - "WebKitWebView"
     - "GtkWidget"
     - "GtkWindow"
     - "GError"
     - "cairo_t"
     - "cairo_surface_t"
-    - "GtkContainer" # gtk_container_add သုံးရန်
-    - "_GClosure" # g_signal_connect_data ရဲ့ callback function ထဲမှာ သုံးထားလို့
+    - "GtkContainer"
+    - "_GClosure"
+    - "JSCValue" # JavaScript Result ကို ဖတ်ဖို့အတွက် မဖြစ်မနေလိုပါသည်
+    - "GAsyncResult" # Async Callback (_finish functions) တွေမှာ သုံးဖို့ လိုပါသည်
+    - "_GMainContext" # standard main context အတွက် လိုအပ်နိုင်ပါသည်
+    - "WebKitJavascriptResult"
 
 enums:
   include:
-    # WebKit ရဲ့ Snapshot option/region သတ်မှတ်ချက် enum လောက်ပဲ ယူမယ်
     - "WebKitSnapshotRegion"
     - "WebKitSnapshotOptions"
-    - "GConnectFlags" # g_signal_connect_data ထဲမှာ သုံးရန်
+    - "GConnectFlags"

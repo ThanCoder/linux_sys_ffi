@@ -60,6 +60,14 @@ class WebKitBindings {
 
   set timezone(int value) => _timezone.value = value;
 
+  void g_free(gpointer mem) {
+    return _g_free(mem);
+  }
+
+  late final _g_freePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(gpointer)>>('g_free');
+  late final _g_free = _g_freePtr.asFunction<void Function(gpointer)>();
+
   late final ffi.Pointer<gboolean> _g_mem_gc_friendly = _lookup<gboolean>(
     'g_mem_gc_friendly',
   );
@@ -76,6 +84,63 @@ class WebKitBindings {
 
   set glib_mem_profiler_table(ffi.Pointer<GMemVTable> value) =>
       _glib_mem_profiler_table.value = value;
+
+  ffi.Pointer<GMainContext> g_main_context_default() {
+    return _g_main_context_default();
+  }
+
+  late final _g_main_context_defaultPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<GMainContext> Function()>>(
+        'g_main_context_default',
+      );
+  late final _g_main_context_default = _g_main_context_defaultPtr
+      .asFunction<ffi.Pointer<GMainContext> Function()>();
+
+  int g_main_context_iteration(
+    ffi.Pointer<GMainContext> context,
+    int may_block,
+  ) {
+    return _g_main_context_iteration(context, may_block);
+  }
+
+  late final _g_main_context_iterationPtr =
+      _lookup<
+        ffi.NativeFunction<
+          gboolean Function(ffi.Pointer<GMainContext>, gboolean)
+        >
+      >('g_main_context_iteration');
+  late final _g_main_context_iteration = _g_main_context_iterationPtr
+      .asFunction<int Function(ffi.Pointer<GMainContext>, int)>();
+
+  int g_idle_add(GSourceFunc function, gpointer data) {
+    return _g_idle_add(function, data);
+  }
+
+  late final _g_idle_addPtr =
+      _lookup<ffi.NativeFunction<guint Function(GSourceFunc, gpointer)>>(
+        'g_idle_add',
+      );
+  late final _g_idle_add = _g_idle_addPtr
+      .asFunction<int Function(GSourceFunc, gpointer)>();
+
+  void g_main_context_invoke(
+    ffi.Pointer<GMainContext> context,
+    GSourceFunc function,
+    gpointer data,
+  ) {
+    return _g_main_context_invoke(context, function, data);
+  }
+
+  late final _g_main_context_invokePtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<GMainContext>, GSourceFunc, gpointer)
+        >
+      >('g_main_context_invoke');
+  late final _g_main_context_invoke = _g_main_context_invokePtr
+      .asFunction<
+        void Function(ffi.Pointer<GMainContext>, GSourceFunc, gpointer)
+      >();
 
   late final ffi.Pointer<GSourceFuncs> _g_timeout_funcs = _lookup<GSourceFuncs>(
     'g_timeout_funcs',
@@ -642,6 +707,22 @@ class WebKitBindings {
   late final _jsc_value_to_string = _jsc_value_to_stringPtr
       .asFunction<ffi.Pointer<ffi.Char> Function(ffi.Pointer<JSCValue>)>();
 
+  void webkit_javascript_result_unref(
+    ffi.Pointer<WebKitJavascriptResult> js_result,
+  ) {
+    return _webkit_javascript_result_unref(js_result);
+  }
+
+  late final _webkit_javascript_result_unrefPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<WebKitJavascriptResult>)
+        >
+      >('webkit_javascript_result_unref');
+  late final _webkit_javascript_result_unref =
+      _webkit_javascript_result_unrefPtr
+          .asFunction<void Function(ffi.Pointer<WebKitJavascriptResult>)>();
+
   ffi.Pointer<JSCValue> webkit_javascript_result_get_js_value(
     ffi.Pointer<WebKitJavascriptResult> js_result,
   ) {
@@ -660,6 +741,75 @@ class WebKitBindings {
             ffi.Pointer<JSCValue> Function(ffi.Pointer<WebKitJavascriptResult>)
           >();
 
+  ffi.Pointer<WebKitUserContentManager> webkit_user_content_manager_new() {
+    return _webkit_user_content_manager_new();
+  }
+
+  late final _webkit_user_content_manager_newPtr =
+      _lookup<
+        ffi.NativeFunction<ffi.Pointer<WebKitUserContentManager> Function()>
+      >('webkit_user_content_manager_new');
+  late final _webkit_user_content_manager_new =
+      _webkit_user_content_manager_newPtr
+          .asFunction<ffi.Pointer<WebKitUserContentManager> Function()>();
+
+  /// webkit_user_content_manager_register_script_message_handler:
+  /// @manager: A #WebKitUserContentManager
+  /// @name: Name of the script message channel
+  ///
+  /// Registers a new user script message handler.
+  ///
+  /// After it is registered,
+  /// scripts can use `window.webkit.messageHandlers.<name>.postMessage(value)`
+  /// to send messages. Those messages are received by connecting handlers
+  /// to the #WebKitUserContentManager::script-message-received signal. The
+  /// handler name is used as the detail of the signal. To avoid race
+  /// conditions between registering the handler name, and starting to
+  /// receive the signals, it is recommended to connect to the signal
+  /// *before* registering the handler name:
+  ///
+  /// ```c
+  /// WebKitWebView *view = webkit_web_view_new ();
+  /// WebKitUserContentManager *manager = webkit_web_view_get_user_content_manager ();
+  /// g_signal_connect (manager, "script-message-received::foobar",
+  /// G_CALLBACK (handle_script_message), NULL);
+  /// webkit_user_content_manager_register_script_message_handler (manager, "foobar");
+  /// ```
+  ///
+  /// Registering a script message handler will fail if the requested
+  /// name has been already registered before.
+  ///
+  /// Returns: %TRUE if message handler was registered successfully, or %FALSE otherwise.
+  ///
+  /// Since: 2.8
+  int webkit_user_content_manager_register_script_message_handler(
+    ffi.Pointer<WebKitUserContentManager> manager,
+    ffi.Pointer<gchar> name,
+  ) {
+    return _webkit_user_content_manager_register_script_message_handler(
+      manager,
+      name,
+    );
+  }
+
+  late final _webkit_user_content_manager_register_script_message_handlerPtr =
+      _lookup<
+        ffi.NativeFunction<
+          gboolean Function(
+            ffi.Pointer<WebKitUserContentManager>,
+            ffi.Pointer<gchar>,
+          )
+        >
+      >('webkit_user_content_manager_register_script_message_handler');
+  late final _webkit_user_content_manager_register_script_message_handler =
+      _webkit_user_content_manager_register_script_message_handlerPtr
+          .asFunction<
+            int Function(
+              ffi.Pointer<WebKitUserContentManager>,
+              ffi.Pointer<gchar>,
+            )
+          >();
+
   ffi.Pointer<GtkWidget> webkit_web_view_new() {
     return _webkit_web_view_new();
   }
@@ -670,6 +820,26 @@ class WebKitBindings {
       );
   late final _webkit_web_view_new = _webkit_web_view_newPtr
       .asFunction<ffi.Pointer<GtkWidget> Function()>();
+
+  ffi.Pointer<GtkWidget> webkit_web_view_new_with_user_content_manager(
+    ffi.Pointer<WebKitUserContentManager> user_content_manager,
+  ) {
+    return _webkit_web_view_new_with_user_content_manager(user_content_manager);
+  }
+
+  late final _webkit_web_view_new_with_user_content_managerPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<GtkWidget> Function(ffi.Pointer<WebKitUserContentManager>)
+        >
+      >('webkit_web_view_new_with_user_content_manager');
+  late final _webkit_web_view_new_with_user_content_manager =
+      _webkit_web_view_new_with_user_content_managerPtr
+          .asFunction<
+            ffi.Pointer<GtkWidget> Function(
+              ffi.Pointer<WebKitUserContentManager>,
+            )
+          >();
 
   void webkit_web_view_load_uri(
     ffi.Pointer<WebKitWebView> web_view,
@@ -769,34 +939,6 @@ class WebKitBindings {
             )
           >();
 
-  ffi.Pointer<WebKitJavascriptResult> webkit_web_view_run_javascript_finish(
-    ffi.Pointer<WebKitWebView> web_view,
-    ffi.Pointer<GAsyncResult> result,
-    ffi.Pointer<ffi.Pointer<GError>> error,
-  ) {
-    return _webkit_web_view_run_javascript_finish(web_view, result, error);
-  }
-
-  late final _webkit_web_view_run_javascript_finishPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Pointer<WebKitJavascriptResult> Function(
-            ffi.Pointer<WebKitWebView>,
-            ffi.Pointer<GAsyncResult>,
-            ffi.Pointer<ffi.Pointer<GError>>,
-          )
-        >
-      >('webkit_web_view_run_javascript_finish');
-  late final _webkit_web_view_run_javascript_finish =
-      _webkit_web_view_run_javascript_finishPtr
-          .asFunction<
-            ffi.Pointer<WebKitJavascriptResult> Function(
-              ffi.Pointer<WebKitWebView>,
-              ffi.Pointer<GAsyncResult>,
-              ffi.Pointer<ffi.Pointer<GError>>,
-            )
-          >();
-
   void webkit_web_view_get_snapshot(
     ffi.Pointer<WebKitWebView> web_view,
     WebKitSnapshotRegion region,
@@ -839,6 +981,34 @@ class WebKitBindings {
           gpointer,
         )
       >();
+
+  ffi.Pointer<cairo_surface_t> webkit_web_view_get_snapshot_finish(
+    ffi.Pointer<WebKitWebView> web_view,
+    ffi.Pointer<GAsyncResult> result,
+    ffi.Pointer<ffi.Pointer<GError>> error,
+  ) {
+    return _webkit_web_view_get_snapshot_finish(web_view, result, error);
+  }
+
+  late final _webkit_web_view_get_snapshot_finishPtr =
+      _lookup<
+        ffi.NativeFunction<
+          ffi.Pointer<cairo_surface_t> Function(
+            ffi.Pointer<WebKitWebView>,
+            ffi.Pointer<GAsyncResult>,
+            ffi.Pointer<ffi.Pointer<GError>>,
+          )
+        >
+      >('webkit_web_view_get_snapshot_finish');
+  late final _webkit_web_view_get_snapshot_finish =
+      _webkit_web_view_get_snapshot_finishPtr
+          .asFunction<
+            ffi.Pointer<cairo_surface_t> Function(
+              ffi.Pointer<WebKitWebView>,
+              ffi.Pointer<GAsyncResult>,
+              ffi.Pointer<ffi.Pointer<GError>>,
+            )
+          >();
 }
 
 final class _GDoubleIEEE754 extends ffi.Opaque {}
@@ -1096,6 +1266,31 @@ final class _GMemVTable extends ffi.Struct {
 typedef gsize = ffi.UnsignedLong;
 typedef Dartgsize = int;
 
+final class _GMainContext extends ffi.Opaque {}
+
+/// GMainContext:
+///
+/// The `GMainContext` struct is an opaque data
+/// type representing a set of sources to be handled in a main loop.
+typedef GMainContext = _GMainContext;
+
+/// GSourceFunc:
+/// @user_data: data passed to the function, set when the source was
+/// created with one of the above functions
+///
+/// Specifies the type of function passed to g_timeout_add(),
+/// g_timeout_add_full(), g_idle_add(), and g_idle_add_full().
+///
+/// When calling g_source_set_callback(), you may need to cast a function of a
+/// different type to this type. Use G_SOURCE_FUNC() to avoid warnings about
+/// incompatible function types.
+///
+/// Returns: %FALSE if the source should be removed. %G_SOURCE_CONTINUE and
+/// %G_SOURCE_REMOVE are more memorable names for the return value.
+typedef GSourceFunc = ffi.Pointer<ffi.NativeFunction<GSourceFuncFunction>>;
+typedef GSourceFuncFunction = gboolean Function(gpointer user_data);
+typedef DartGSourceFuncFunction = Dartgint Function(gpointer user_data);
+
 /// GSourceFuncs:
 /// @prepare: Called before all the file descriptors are polled. If the
 /// source can determine that it is ready here (without waiting for the
@@ -1251,31 +1446,6 @@ final class _GSourceCallbackFuncs extends ffi.Struct {
   >
   get1;
 }
-
-/// GSourceFunc:
-/// @user_data: data passed to the function, set when the source was
-/// created with one of the above functions
-///
-/// Specifies the type of function passed to g_timeout_add(),
-/// g_timeout_add_full(), g_idle_add(), and g_idle_add_full().
-///
-/// When calling g_source_set_callback(), you may need to cast a function of a
-/// different type to this type. Use G_SOURCE_FUNC() to avoid warnings about
-/// incompatible function types.
-///
-/// Returns: %FALSE if the source should be removed. %G_SOURCE_CONTINUE and
-/// %G_SOURCE_REMOVE are more memorable names for the return value.
-typedef GSourceFunc = ffi.Pointer<ffi.NativeFunction<GSourceFuncFunction>>;
-typedef GSourceFuncFunction = gboolean Function(gpointer user_data);
-typedef DartGSourceFuncFunction = Dartgint Function(gpointer user_data);
-
-/// GMainContext:
-///
-/// The `GMainContext` struct is an opaque data
-/// type representing a set of sources to be handled in a main loop.
-typedef GMainContext = _GMainContext;
-
-final class _GMainContext extends ffi.Opaque {}
 
 typedef GSList = _GSList;
 
@@ -3576,6 +3746,18 @@ typedef WebKitJavascriptResult = _WebKitJavascriptResult;
 
 final class _WebKitJavascriptResult extends ffi.Opaque {}
 
+typedef WebKitUserContentManager = _WebKitUserContentManager;
+
+final class _WebKitUserContentManager extends ffi.Struct {
+  external GObject parent;
+
+  external ffi.Pointer<WebKitUserContentManagerPrivate> priv;
+}
+
+typedef WebKitUserContentManagerPrivate = _WebKitUserContentManagerPrivate;
+
+final class _WebKitUserContentManagerPrivate extends ffi.Opaque {}
+
 /// WebKitSnapshotOptions:
 /// @WEBKIT_SNAPSHOT_OPTIONS_NONE: Do not include any special options.
 /// @WEBKIT_SNAPSHOT_OPTIONS_INCLUDE_SELECTION_HIGHLIGHTING: Whether to include in the
@@ -3694,6 +3876,35 @@ typedef DartGAsyncReadyCallbackFunction =
 typedef GAsyncResult = _GAsyncResult;
 
 final class _GAsyncResult extends ffi.Opaque {}
+
+/// cairo_surface_t:
+///
+/// A #cairo_surface_t represents an image, either as the destination
+/// of a drawing operation or as source when drawing onto another
+/// surface.  To draw to a #cairo_surface_t, create a cairo context
+/// with the surface as the target, using cairo_create().
+///
+/// There are different subtypes of #cairo_surface_t for
+/// different drawing backends; for example, cairo_image_surface_create()
+/// creates a bitmap image in memory.
+/// The type of a surface can be queried with cairo_surface_get_type().
+///
+/// The initial contents of a surface after creation depend upon the manner
+/// of its creation. If cairo creates the surface and backing storage for
+/// the user, it will be initially cleared; for example,
+/// cairo_image_surface_create() and cairo_surface_create_similar().
+/// Alternatively, if the user passes in a reference to some backing storage
+/// and asks cairo to wrap that in a #cairo_surface_t, then the contents are
+/// not modified; for example, cairo_image_surface_create_for_data() and
+/// cairo_xlib_surface_create().
+///
+/// Memory management of #cairo_surface_t is done with
+/// cairo_surface_reference() and cairo_surface_destroy().
+///
+/// Since: 1.0
+typedef cairo_surface_t = _cairo_surface;
+
+final class _cairo_surface extends ffi.Opaque {}
 
 /// GValue:
 ///
@@ -4572,7 +4783,7 @@ const String G_GNUC_PRETTY_FUNCTION = '';
 
 const int G_ANALYZER_ANALYZING = 0;
 
-const String G_STRLOC = '/tmp/TEBVLK/temp_for_macros.hpp:53';
+const String G_STRLOC = '/tmp/PJXSQB/temp_for_macros.hpp:54';
 
 const int FALSE = 0;
 
